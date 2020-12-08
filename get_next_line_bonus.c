@@ -1,22 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/01 14:13:38 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 15:03:33 by ncatrien         ###   ########lyon.fr   */
+/*   Created: 2020/12/08 08:30:14 by ncatrien          #+#    #+#             */
+/*   Updated: 2020/12/08 14:08:37 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-
-int		free_and_return(void *ptr, int value)
-{
-	free(ptr);
-	return (value);
-}
+#include "get_next_line_bonus.h"
 
 t_file	*open_f(int fd)
 {
@@ -36,8 +30,6 @@ int		get_char(t_file *f)
 	char	c;
 	ssize_t read_ret;
 
-	if (!f)
-		return (-1);
 	if (f->position >= f->size)
 	{
 		read_ret = read(f->fd, f->buffer, BUFFER_SIZE);
@@ -52,7 +44,7 @@ int		get_char(t_file *f)
 			return (0);
 		}
 		else
-			return (free_and_return(f, -1));
+			return (-1);
 	}
 	c = f->buffer[f->position];
 	f->position++;
@@ -79,27 +71,29 @@ int		append_char(char **buf, size_t *pos_ptr, size_t *size_ptr, char c)
 
 int		get_next_line(int fd, char **line)
 {
-	static	t_file	*file_array[FDS_LIM];
+	static	t_list	*lst_files;
 	char			c;
-	char			*tmp;
-	size_t			tmp_pos;
-	size_t			tmp_size;
+	t_file			*file;
+	t_buf			buf;
 
-	if (fd < 0 || fd >= FDS_LIM || !line)
+	if (fd < 0 || !line || !(buf.tmp = malloc(BUF_LINE_LIM * sizeof(char))))
+	{
+		*line = NULL;
 		return (-1);
-	if ((tmp = malloc(BUF_LINE_LIM * sizeof(char))) == 0)
+	}
+	buf.position = 0;
+	buf.size = BUF_LINE_LIM;
+	if (!ft_lstfind(&lst_files, fd))
+		ft_lstadd_front(&lst_files, ft_lstnew(open_f(fd)));
+	if (!(file = (ft_lstfind(&lst_files, fd))->content))
 		return (-1);
-	tmp_pos = 0;
-	tmp_size = BUF_LINE_LIM;
-	if (file_array[fd] == 0)
-		file_array[fd] = open_f(fd);
-	while ((c = get_char(file_array[fd])) != '\n' && file_array[fd]->eof == 0)
-		if (c == -1 || !append_char(&tmp, &tmp_pos, &tmp_size, c))
-			return (free_and_return(tmp, -1));
-	if (!append_char(&tmp, &tmp_pos, &tmp_size, '\0'))
-		return (free_and_return(tmp, -1));
-	*line = tmp;
-	if (file_array[fd]->eof)
+	while ((c = get_char(file)) != '\n' && file->eof == 0)
+		if (c == -1 || !append_char(&buf.tmp, &buf.position, &buf.size, c))
+			return (free_and_return(buf.tmp, -1));
+	if (!append_char(&buf.tmp, &buf.position, &buf.size, '\0'))
+		return (free_and_return(buf.tmp, -1));
+	*line = buf.tmp;
+	if (file->eof)
 		return (0);
 	return (1);
 }
