@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/01 14:13:38 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 15:03:33 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 13:51:08 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int		append_char(char **buf, size_t *pos_ptr, size_t *size_ptr, char c)
 
 int		get_next_line(int fd, char **line)
 {
-	static	t_file	*file_array[FDS_LIM];
+	static	t_file	*file;
 	char			c;
 	char			*tmp;
 	size_t			tmp_pos;
@@ -91,15 +91,19 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	tmp_pos = 0;
 	tmp_size = BUF_LINE_LIM;
-	if (file_array[fd] == 0)
-		file_array[fd] = open_f(fd);
-	while ((c = get_char(file_array[fd])) != '\n' && file_array[fd]->eof == 0)
+	if (file == 0)
+		file = open_f(fd);
+	while ((c = get_char(file)) != '\n' && file->eof == 0)
 		if (c == -1 || !append_char(&tmp, &tmp_pos, &tmp_size, c))
 			return (free_and_return(tmp, -1));
 	if (!append_char(&tmp, &tmp_pos, &tmp_size, '\0'))
 		return (free_and_return(tmp, -1));
 	*line = tmp;
-	if (file_array[fd]->eof)
+	if (file->eof)
+	{
+		free(file);
+		file = 0;
 		return (0);
+	}
 	return (1);
 }
