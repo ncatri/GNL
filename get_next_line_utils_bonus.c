@@ -6,17 +6,11 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:32:20 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 09:21:56 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 16:29:17 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-
-int		free_and_return(void *ptr, int value)
-{
-	free(ptr);
-	return (value);
-}
 
 void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
@@ -69,4 +63,31 @@ t_list	*ft_lstfind(t_list **alst, int fd_target)
 		}
 	}
 	return (NULL);
+}
+
+void	ft_lstdelone(t_list **alst, int fd_target)
+{
+	t_list	*cursor;
+	t_list	*prev;
+
+	if (!alst || !((*alst)->content))
+		return ;
+	cursor = *alst;
+	if (cursor->content->fd == fd_target)
+	{
+		*alst = cursor->next;
+		free(cursor->content);
+		free(cursor);
+		return ;
+	}
+	while (cursor && cursor->content->fd != fd_target)
+	{
+		prev = cursor;
+		cursor = cursor->next;	
+	}
+	if (cursor == NULL)
+		return ;
+	prev->next = cursor->next;
+	free(cursor->content);
+	free(cursor);
 }

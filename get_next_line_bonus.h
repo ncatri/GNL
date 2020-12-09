@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:31:19 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 13:12:49 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 16:12:15 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int				append_char(char **buf, size_t *pos_ptr, size_t *size_ptr, \
 void			ft_lstadd_front(t_list **alst, t_list *new);
 t_list			*ft_lstnew(void *content);
 t_list			*ft_lstfind(t_list **alst, int fd_target);
-
+void			ft_lstdelone(t_list **alst, int fd_target);
 int				get_next_line(int fd, char **line);
 void			*ft_memcpy(void *dst, const void *src, size_t n);
 

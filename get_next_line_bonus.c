@@ -6,11 +6,17 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:30:14 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 14:08:37 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 16:12:37 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
+
+int		free_and_return(void *ptr, int value)
+{
+	free(ptr);
+	return (value);
+}
 
 t_file	*open_f(int fd)
 {
@@ -30,6 +36,8 @@ int		get_char(t_file *f)
 	char	c;
 	ssize_t read_ret;
 
+	if (!f)
+		return (-1);
 	if (f->position >= f->size)
 	{
 		read_ret = read(f->fd, f->buffer, BUFFER_SIZE);
@@ -77,10 +85,7 @@ int		get_next_line(int fd, char **line)
 	t_buf			buf;
 
 	if (fd < 0 || !line || !(buf.tmp = malloc(BUF_LINE_LIM * sizeof(char))))
-	{
-		*line = NULL;
 		return (-1);
-	}
 	buf.position = 0;
 	buf.size = BUF_LINE_LIM;
 	if (!ft_lstfind(&lst_files, fd))
@@ -94,6 +99,9 @@ int		get_next_line(int fd, char **line)
 		return (free_and_return(buf.tmp, -1));
 	*line = buf.tmp;
 	if (file->eof)
+	{
+		ft_lstdelone(&lst_files, fd); //or file->fd ?
 		return (0);
+	}
 	return (1);
 }
