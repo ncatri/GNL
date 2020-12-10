@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:30:14 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/09 16:12:37 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 17:19:01 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,14 +94,14 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	while ((c = get_char(file)) != '\n' && file->eof == 0)
 		if (c == -1 || !append_char(&buf.tmp, &buf.position, &buf.size, c))
+		{
+			ft_lstdelone(&lst_files, fd);
 			return (free_and_return(buf.tmp, -1));
+		}
 	if (!append_char(&buf.tmp, &buf.position, &buf.size, '\0'))
 		return (free_and_return(buf.tmp, -1));
 	*line = buf.tmp;
-	if (file->eof)
-	{
-		ft_lstdelone(&lst_files, fd); //or file->fd ?
+	if (file->eof && ft_lstdelone(&lst_files, fd))
 		return (0);
-	}
 	return (1);
 }

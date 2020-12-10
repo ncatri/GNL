@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/28 12:55:32 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/08 09:54:47 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/10 10:36:09 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,15 @@ typedef struct	s_file
 	size_t	position;
 	size_t	size;
 	int		eof;
+	int		bad;
 }				t_file;
+
+typedef struct	s_buf
+{
+	char *tmp;
+	size_t pos;
+	size_t size;
+}				t_buf;
 
 int				get_next_line(int fd, char **line);
 void			*ft_memcpy(void *dst, const void *src, size_t n);

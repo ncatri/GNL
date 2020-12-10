@@ -6,13 +6,13 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/01 14:13:38 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/09 13:51:08 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/10 10:44:04 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		free_and_return(void *ptr, int value)
+int		free_ret(void *ptr, int value)
 {
 	free(ptr);
 	return (value);
@@ -28,6 +28,7 @@ t_file	*open_f(int fd)
 	fpt->position = 0;
 	fpt->size = 0;
 	fpt->eof = 0;
+	fpt->bad = 0;
 	return (fpt);
 }
 
@@ -52,21 +53,21 @@ int		get_char(t_file *f)
 			return (0);
 		}
 		else
-			return (free_and_return(f, -1));
+			f->bad = 1;
 	}
 	c = f->buffer[f->position];
 	f->position++;
 	return (c);
 }
 
-int		append_char(char **buf, size_t *pos_ptr, size_t *size_ptr, char c)
+int		append(char **buf, size_t *pos_ptr, size_t *size_ptr, char c)
 {
 	char	*tmp;
 
 	if (*pos_ptr >= *size_ptr)
 	{
 		if (!(tmp = malloc(sizeof(char) * (*size_ptr + BUF_LINE_LIM))))
-			return (free_and_return(*buf, 0));
+			return (free_ret(*buf, 0));
 		ft_memcpy(tmp, *buf, *size_ptr);
 		*size_ptr = *size_ptr + BUF_LINE_LIM;
 		free(*buf);
@@ -79,30 +80,28 @@ int		append_char(char **buf, size_t *pos_ptr, size_t *size_ptr, char c)
 
 int		get_next_line(int fd, char **line)
 {
-	static	t_file	*file;
+	static	t_file	*f;
 	char			c;
-	char			*tmp;
-	size_t			tmp_pos;
-	size_t			tmp_size;
+	t_buf			b;
 
-	if (fd < 0 || fd >= FDS_LIM || !line)
+	if (fd < 0 || fd >= FDS_LIM || !line || BUFFER_SIZE == 0)
 		return (-1);
-	if ((tmp = malloc(BUF_LINE_LIM * sizeof(char))) == 0)
+	if ((b.tmp = malloc(BUF_LINE_LIM * sizeof(char))) == 0)
 		return (-1);
-	tmp_pos = 0;
-	tmp_size = BUF_LINE_LIM;
-	if (file == 0)
-		file = open_f(fd);
-	while ((c = get_char(file)) != '\n' && file->eof == 0)
-		if (c == -1 || !append_char(&tmp, &tmp_pos, &tmp_size, c))
-			return (free_and_return(tmp, -1));
-	if (!append_char(&tmp, &tmp_pos, &tmp_size, '\0'))
-		return (free_and_return(tmp, -1));
-	*line = tmp;
-	if (file->eof)
+	b.pos = 0;
+	b.size = BUF_LINE_LIM;
+	if (f == 0)
+		f = open_f(fd);
+	while ((c = get_char(f)) != '\n' && f->eof == 0)
+		if ((f->bad && free_ret(f, 1)) || !append(&b.tmp, &b.pos, &b.size, c))
+			return (free_ret(b.tmp, -1));
+	if (!append(&b.tmp, &b.pos, &b.size, '\0'))
+		return (free_ret(b.tmp, -1));
+	*line = b.tmp;
+	if (f->eof)
 	{
-		free(file);
-		file = 0;
+		free(f);
+		f = 0;
 		return (0);
 	}
 	return (1);

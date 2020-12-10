@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:32:20 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/09 16:29:17 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/09 17:20:48 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,20 @@ t_list	*ft_lstfind(t_list **alst, int fd_target)
 	return (NULL);
 }
 
-void	ft_lstdelone(t_list **alst, int fd_target)
+int		ft_lstdelone(t_list **alst, int fd_target)
 {
 	t_list	*cursor;
 	t_list	*prev;
 
 	if (!alst || !((*alst)->content))
-		return ;
+		return (1);
 	cursor = *alst;
 	if (cursor->content->fd == fd_target)
 	{
 		*alst = cursor->next;
 		free(cursor->content);
 		free(cursor);
-		return ;
+		return (1);
 	}
 	while (cursor && cursor->content->fd != fd_target)
 	{
@@ -86,8 +86,9 @@ void	ft_lstdelone(t_list **alst, int fd_target)
 		cursor = cursor->next;	
 	}
 	if (cursor == NULL)
-		return ;
+		return (1);
 	prev->next = cursor->next;
 	free(cursor->content);
 	free(cursor);
+	return (1);
 }
