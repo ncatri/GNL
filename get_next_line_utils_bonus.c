@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:32:20 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/09 17:20:48 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/10 14:49:30 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int		ft_lstdelone(t_list **alst, int fd_target)
 	while (cursor && cursor->content->fd != fd_target)
 	{
 		prev = cursor;
-		cursor = cursor->next;	
+		cursor = cursor->next;
 	}
 	if (cursor == NULL)
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/28 12:55:32 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/10 10:36:09 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/10 16:09:29 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,16 @@ typedef struct	s_file
 
 typedef struct	s_buf
 {
-	char *tmp;
-	size_t pos;
-	size_t size;
+	char	*tmp;
+	size_t	pos;
+	size_t	size;
 }				t_buf;
 
 int				get_next_line(int fd, char **line);
 void			*ft_memcpy(void *dst, const void *src, size_t n);
+int				free_ret(void *ptr, int value);
+t_file			*open_f(int fd);
+int				get_char(t_file *f);
+int				append(char **buf, size_t *pos_ptr, size_t *size_ptr, char c);
 
 #endif

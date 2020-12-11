@@ -6,7 +6,7 @@
 /*   By: ncatrien <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/08 08:30:14 by ncatrien          #+#    #+#             */
-/*   Updated: 2020/12/09 17:19:01 by ncatrien         ###   ########lyon.fr   */
+/*   Updated: 2020/12/10 14:50:30 by ncatrien         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,25 +82,25 @@ int		get_next_line(int fd, char **line)
 	static	t_list	*lst_files;
 	char			c;
 	t_file			*file;
-	t_buf			buf;
+	t_buf			b;
 
-	if (fd < 0 || !line || !(buf.tmp = malloc(BUF_LINE_LIM * sizeof(char))))
+	if (fd < 0 || !line || !(b.tmp = malloc(sizeof(char))) || BUFFER_SIZE <= 0)
 		return (-1);
-	buf.position = 0;
-	buf.size = BUF_LINE_LIM;
+	b.position = 0;
+	b.size = BUF_LINE_LIM;
 	if (!ft_lstfind(&lst_files, fd))
 		ft_lstadd_front(&lst_files, ft_lstnew(open_f(fd)));
 	if (!(file = (ft_lstfind(&lst_files, fd))->content))
 		return (-1);
 	while ((c = get_char(file)) != '\n' && file->eof == 0)
-		if (c == -1 || !append_char(&buf.tmp, &buf.position, &buf.size, c))
+		if (c == -1 || !append_char(&b.tmp, &b.position, &b.size, c))
 		{
 			ft_lstdelone(&lst_files, fd);
-			return (free_and_return(buf.tmp, -1));
+			return (free_and_return(b.tmp, -1));
 		}
-	if (!append_char(&buf.tmp, &buf.position, &buf.size, '\0'))
-		return (free_and_return(buf.tmp, -1));
-	*line = buf.tmp;
+	if (!append_char(&b.tmp, &b.position, &b.size, '\0'))
+		return (free_and_return(b.tmp, -1));
+	*line = b.tmp;
 	if (file->eof && ft_lstdelone(&lst_files, fd))
 		return (0);
 	return (1);

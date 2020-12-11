@@ -1,6 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int main(void)
 {
@@ -15,6 +15,8 @@ int main(void)
 		get_next_line(fd_fr, &line);
 		printf("fr:  %s\n",line);
 		free(line);
+		get_next_line(42, &line); // adding malicious fd test
+	//	free(line);
 		get_next_line(fd_en, &line);
 		printf("en:  %s\n",line);
 		free(line);
@@ -23,6 +25,5 @@ int main(void)
 		free(line);
 		i++;
 	}
-	while (1)
-		;
+	get_next_line(0, &line);
 }
